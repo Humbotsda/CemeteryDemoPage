@@ -35,7 +35,8 @@ myMap.addControl(new L.Control.Fullscreen({position: 'topright'}));
 
 // Add basemap
 var tileCartoDBVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+		attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; \
+					<a href="https://carto.com/attributions">CARTO</a>',
 		subdomains: 'abcd',
 		maxZoom: 25,
 		minZoom: 12
@@ -43,7 +44,7 @@ var tileCartoDBVoyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rasterti
 
 // Add orthophoto tileset
 var tileOrtho = L.tileLayer('https://api.mapbox.com/v4/{tilesetId}/{z}/{x}/{y}.png?access_token={accessToken}', {
-      attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>',
+	  attribution: 'Imagery © <a href="http://humbotsda.com">Humbots D&A</a>',
       maxZoom: 25,
       minZoom: 15,
       accessToken: 'pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ',
@@ -66,9 +67,8 @@ function assignPopup(feature, layer)
 {
 	// Occupied plots get popups, others don't
 	if (feature.properties.Status_Des == "Occupied")
-		layer.bindPopup(popupTemplate(feature.properties.Name, 
-			feature.properties.Birth, 
-			feature.properties.Death));
+		// Build a popup table using a template
+		layer.bindPopup(popupTemplate(feature));
 }
 
 // Runs every time a feature is added to a geoJSON
