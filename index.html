@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 
-
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <!-- Include Leaflet -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
@@ -28,10 +28,40 @@
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
 
+    <!-- CSS formatting for popup tables -->
+    <style>
+        table {
+            width:100%;
+            color: rgb(20, 20, 20);
+            font-family: sans;
+            font-size: 12pt;
+            background-color: rgb(100, 100, 100);
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+
+        }
+        th, td {
+            padding: 5px;
+            text-align: left;
+        }
+        table#t01 td:nth-child(odd) {
+            background-color: rgb(200, 200, 200);
+            font-weight: bold;
+        }
+        table#t01 td:nth-child(even) {
+        background-color: rgb(250, 250, 250);
+        }
+    </style>
+
 </head>
 <body>
     <div id='pointMap' style="height: 600px; width: 800px; position: relative" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag"></div>
     <script src='points.js'></script>
+    <script src='roads.js'></script>
+    <script src='popup_template.js'></script>
+    <script src='legend.js'></script>
     <script src='map.js'></script>
 </body>
 </html>
