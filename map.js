@@ -7,11 +7,39 @@ var OpenStreetMap_Mapnik = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{
 }).addTo(myMap);
 
 
+var blueIcon = L.icon({
+	iconSize: [10, 10],
+	iconUrl: "assets/icons/grave_icon_blue.png"
+})
+
+var purpleIcon = L.icon({
+	iconSize: [10, 10],
+	iconUrl: "assets/icons/grave_icon_purple.png"
+})
+
+var goldIcon = L.icon({
+	iconSize: [10, 10],
+	iconUrl: "assets/icons/grave_icon_gold.png"
+})
+
+// Assign the correct icon based on the plot availability
+function assignIcon(feature, layer)
+{
+	if (feature.properties.Status_Des == "Occupied")
+		layer.setIcon(blueIcon);
+	else if (feature.properties.Status_Des == "Available")
+		layer.setIcon(goldIcon);
+	else
+		layer.setIcon(purpleIcon);
+}
+
 // Runs every time a feature is added to a geoJSON
 function onEachFeature(feature, layer)
 {
 	// Create a tooltip to show the current plot availability
 	layer.bindTooltip(feature.properties.Status_Des);
+	
+	assignIcon(feature, layer);
 }
 
 
