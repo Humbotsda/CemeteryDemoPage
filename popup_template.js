@@ -1,30 +1,13 @@
-// Return a popup table using the feature properties
-function popupTemplate(name, birth, death)
+// Return a popup table using the input feature properties
+function popupTemplate(feature)
 {
+    var name = feature.properties.Name;
+    var birth = feature.properties.Birth;
+    var death = feature.properties.Death;
+
     templateString = `
     <!DOCTYPE html>
     <html>
-        <head>
-            <style>
-                table {{
-                    width:100%;
-                }}
-                table, th, td {{
-                    border: 1px solid black;
-                    border-collapse: collapse;
-                }}
-                th, td {{
-                    padding: 5px;
-                    text-align: left;
-                }}
-                table#t01 tr:nth-child(odd) {{
-                    background-color: #eee;
-                }}
-                table#t01 tr:nth-child(even) {{
-                background-color:#fff;
-                }}
-            </style>
-        </head>
         <body>
             <table id="t01">
                 <tr>
