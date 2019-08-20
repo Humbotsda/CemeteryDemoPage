@@ -61,27 +61,38 @@ function assignIcon(feature, layer)
 		layer.setIcon(purpleIcon);
 }
 
+// Assign the correct popup to the grave plot
+function assignPopup(feature, layer)
+{
+	// Occupied plots get popups, others don't
+	if (feature.properties.Status_Des == "Occupied")
+		layer.bindPopup(popupTemplate(feature.properties.Name, 
+			feature.properties.Birth, 
+			feature.properties.Death));
+}
+
 // Runs every time a feature is added to a geoJSON
 function onEachFeature(feature, layer)
 {
 	// Create a tooltip to show the current plot availability
 	layer.bindTooltip(feature.properties.Status_Des);
 	
-	layer.bindPopup(feature.properties.Name);
+	// Assign the correct popup
+	assignPopup(feature, layer);
 
 	// Assign the correct icon
 	assignIcon(feature, layer);
 }
 
 // Load the cemetery roads from a JSON into the map
-cemeteryRoads = L.geoJSON(roadJSON, {
+var cemeteryRoads = L.geoJSON(roadJSON, {
 	color: "white",
 	opacity: 0.8,
 	weight: 2
 }).addTo(myMap);
 
 // Load all grave plot points from a JSON into the map
-gravePoints = L.geoJSON(graveJSON, {
+var gravePoints = L.geoJSON(graveJSON, {
 	// Run this function for every feature that is created
 	onEachFeature: onEachFeature
 }).addTo(myMap);
