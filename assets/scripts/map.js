@@ -1,6 +1,16 @@
-// Create the map
-var myMap = L.map('pointMap').setView([home.lat, home.lng], home.zoom)
+var home = {
+	lat: 40.87955,
+	lng: -123.9823,
+	zoom: 19
+} 
 
+// Create the map
+var myMap = L.map('pointMap', {
+	zoomSnap: 1,
+	center: [home.lat, home.lng],
+	zoom: home.zoom,
+	preferCanvas: false
+})
 
 function addControls()
 {
@@ -162,6 +172,29 @@ function addLayerControl()
 	).addTo(myMap);
 }
 
+// Control icon size and hide points when zoomed out
+myMap.on('zoomend', function(e) {
+	var currentZoom = myMap.getZoom();
+	// Layer to hide when zoomed out too far
+	var layer = gravePoints
+	// Minimum zoom at which the layer will still be visible
+	var minimumZoom = 16
+	// Get all icons
+	var elements = document.getElementsByClassName( 'leaflet-marker-icon' );
+	
+	// Icon size at different zoom levels
+	var zoomScale = {14: "0px", 15: "4px", 16: "3px", 17: "4px", 18: "5px", 19: "7px", 20: "9px", 21: "10px", 22: "11px", 23: "12px", 24: "13px", 25: "14px"}
+
+	// Change the size of all icons using zoomScale
+	for (var i=0; i<elements.length; i++)
+	{
+		elements[i].style.width = zoomScale[currentZoom];
+		elements[i].style.height = zoomScale[currentZoom];
+		// Margins should be 1/2 of the size, and negative
+		elements[i].style.marginLeft = `${-1 * parseInt(zoomScale[currentZoom], 10)/2}px`;
+		elements[i].style.marginTop = `${-1 * parseInt(zoomScale[currentZoom], 10)/2}px`;
+	}
+})
 
 addControls();
 var gravePoints = addGravePoints();
