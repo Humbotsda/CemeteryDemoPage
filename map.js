@@ -1,6 +1,3 @@
-
-
-
 var blueIcon = L.icon({
 	iconSize: [10, 10],
 	iconUrl: "assets/icons/grave_icon_blue.png"
@@ -76,7 +73,14 @@ function onEachFeature(feature, layer)
 	assignIcon(feature, layer);
 }
 
+// Load the cemetery roads from a JSON into the map
+cemeteryRoads = L.geoJSON(roadJSON, {
+	color: "white",
+	opacity: 0.8,
+	weight: 2
+}).addTo(myMap);
 
+// Load all grave plot points from a JSON into the map
 gravePoints = L.geoJSON(graveJSON, {
 	// Run this function for every feature that is created
 	onEachFeature: onEachFeature
@@ -107,10 +111,12 @@ var layerControl = {
 	overlays: {
 		"Street basemap" : tileCartoDBVoyager,
 		"Orthoimagery" : tileOrtho,
-		"Grave plots" : gravePoints
+		"Grave plots" : gravePoints,
+		"Cemetery roads" : cemeteryRoads
 	}
 }
 
+// Add the layer control to the map
 L.control.layers(
 	layerControl.base_layers,
 	layerControl.overlays,
