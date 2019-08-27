@@ -5,11 +5,7 @@ function addLegend()
     `
         <!doctype html>
         <html lang="en">
-        <div id='maplegend' class='maplegend' 
-            style='position: absolute; top: 170px; height: 80px; left: 18px; width: 106px; z-index:9999; border-style: solid;
-            border-color: rgba(0,0,0,0.2); border-width: 2px; 
-            background-color: rgba(255, 255, 255, 1); 
-            border-radius:6px; padding: 10px; font-size:14px; right: 20px; bottom: 20px;'>
+        <div id='maplegend' class='maplegend'>
 
         <div class='legend-title'>Plot status</div>
         <div class='legend-scale'>
@@ -17,7 +13,6 @@ function addLegend()
             <li><span style='background:rgb(68, 140, 203);opacity:1;'></span>Occupied</li>
             <li><span style='background:rgb(212, 198, 37);opacity:1;'></span>Available</li>
             <li><span style='background:rgb(203, 68, 109);opacity:1;'></span>Sold</li>
-
         </ul>
         </div>
         </div>
@@ -26,10 +21,29 @@ function addLegend()
         </html>
 
         <style type='text/css'>
+        .maplegend {
+            position: absolute; 
+
+            height: auto; 
+
+            width: auto; 
+            z-index:999; 
+            border-style: solid;
+            border-color: rgba(0,0,0,0.2); 
+            border-width: 2px; 
+            background-color: rgba(255, 255, 255, 1); 
+            border-radius:5px; 
+            padding: 5px; 
+            font-size:14px; 
+            top: 160px; 
+            left: 10px;
+        }
         .maplegend .legend-title {
+            font-family: sans-serif;
             text-align: left;
             margin-bottom: 5px;
-            font-weight: bold;
+            margin-left: 10px;
+            font-weight: regular;
             font-size: 100%;
             }
         .maplegend .legend-scale ul {
@@ -40,9 +54,10 @@ function addLegend()
             list-style: none;
             }
         .maplegend .legend-scale ul li {
-            font-size: 90%;
+            font-family: sans-serif;
+            font-size: 9pt;
             list-style: none;
-            margin-left: 0;
+            margin-left: 10px;
             line-height: 18px;
             margin-bottom: 2px;
             }
@@ -52,7 +67,7 @@ function addLegend()
             height: 16px;
             width: 30px;
             margin-right: 5px;
-            margin-left: 0;
+            margin-left: 0px;
             border: 1px solid #999;
             }
         .maplegend .legend-source {
