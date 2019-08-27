@@ -24,6 +24,9 @@ function addControls()
 		
 	// Add a fullscreen toggle
 	myMap.addControl(new L.Control.Fullscreen({position: 'topright'}));
+
+	// Add scale bar
+	L.control.betterscale().addTo(myMap);
 }
 
 // Add the street basemap to the map
@@ -84,8 +87,12 @@ function addGravePoints()
 	{
 		// Occupied plots get popups, others don't
 		if (feature.properties.Status_Des == "Occupied")
-			// Build a popup table using a template
-			layer.bindPopup(popupTemplate(feature));
+			if (feature.properties.Name == "Hannes Becker")
+				// Special video popup for Hannes Becker's grave with custom CSS class
+				layer.bindPopup(videoPopupTemplate(feature), {'className': 'popupVideo'});
+			else
+				// Build a popup table using a template
+				layer.bindPopup(popupTemplate(feature));
 	}
 
 	// Runs every time a feature is added to a geoJSON
@@ -131,10 +138,18 @@ function addSearch()
 		propertyName: 'Name',
 		collapsed: false,
 		textPlaceholder: 'Search by name...',
+		geometry: 'Polygon',
+		// Accept the first suggested search when enter is hit
+		firstTipSubmit: true,
+		// Hide the circle marker when a grave is found
+		marker: false,
+		// Allow searching by partial matches (such as just last name)
+		initial: false,
+
 		// When a location is found, fly there slowly
 		moveToLocation: function(latlng, title, map) {
-			var zoom =  22 
-				map.flyTo(latlng, zoom, {animate: true, duration: 3});
+			var zoom =  22;
+				map.flyTo(latlng, zoom, {animate: true, duration: 1});
 		}
 	}).addTo(myMap);
 	
@@ -196,11 +211,13 @@ myMap.on('zoomend', function(e) {
 	}
 })
 
+
 addControls();
 var gravePoints = addGravePoints();
 var cemeteryRoads = addRoads();
 var tileCartoDBVoyager = addBasemap();
 var tileOrtho = addOrtho();
+addLegend();
 addSearch();
 addLayerControl();
-addLegend();
+
