@@ -1,4 +1,4 @@
-graveJSON = {
+var graveJSON = {
     "type": "FeatureCollection",
     "features": [
       {
@@ -11,7 +11,7 @@ graveJSON = {
           ]
         },
         "properties": {
-          "Name": "Victor Quinn",
+          "Name": "Hannes Becker",
           "Status": 0,
           "Status_Des": "Occupied",
           "Birth": "1943",
