@@ -28,36 +28,21 @@
     <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
     <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
 
-    <!-- CSS formatting for popup tables -->
-    <style>
-        table {
-            width:100%;
-            color: rgb(20, 20, 20);
-            font-family: sans;
-            font-size: 12pt;
-            background-color: rgb(100, 100, 100);
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
+    <!-- Include betterScaleBar -->
+    <script src='https://daniellsu.github.io/leaflet-betterscale/L.Control.BetterScale.js'></script>
+    <link href='https://daniellsu.github.io/leaflet-betterscale/L.Control.BetterScale.css' rel='stylesheet' />
 
-        }
-        th, td {
-            padding: 5px;
-            text-align: left;
-        }
-        table#t01 td:nth-child(odd) {
-            background-color: rgb(200, 200, 200);
-            font-weight: bold;
-        }
-        table#t01 td:nth-child(even) {
-        background-color: rgb(250, 250, 250);
-        }
-    </style>
+    <style>html, body {width: 100%;height: 100%;margin: 0;padding: 0;}</style>
+    <style>#map {position:absolute;top:0;bottom:0;right:0;left:0;}</style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+
+    <!-- CSS formatting for popup tables -->
+    <link href='assets/css/popup.css' rel='stylesheet' />
 
 </head>
 <body>
-    <div id='pointMap' style="height: 600px; width: 800px; position: relative" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag"></div>
+    <div id='pointMap' style="height: 100%; width: 100%; position: relative" class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag"></div>
     <script src='assets/data/points.js'></script>
     <script src='assets/data/roads.js'></script>
     <script src='assets/scripts/templates/popup_template.js'></script>
