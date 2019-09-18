@@ -161,22 +161,27 @@ function addSearch() {
     // Allow searching by partial matches (such as just last name)
     initial: false,
 
-    // When a location is found, fly there slowly
+    // When a grave is found in search, fly there slowly
     moveToLocation: function(latlng, title, map) {
-      // Latitude offset so that it zooms above the point, giving more room for the popup
-      var lat_offset = 0.00002;
-      // Apply the offset to the point's latlng position to create a new target dictionary
-      var latlng_zoom_target = { lat: latlng["lat"] + lat_offset, lng: latlng["lng"] };
+      // Final zoom level to end at
       var zoom = 22;
-      map.flyTo(latlng_zoom_target, zoom, { animate: true, duration: 1 });
+
+      // Automatically open the popup for that layer
+      latlng.layer.openPopup();
+
+      // Get the pixel coords of the latlng point at the final zoom level
+      var popup_anchor_point = map.project(latlng, zoom);
+
+      // Get the height of the popup in pixels
+      var popup_height = latlng.layer._popup._container.clientHeight;
+
+      // Shift the pixel coords up half the popup height to center the popup in the window
+      popup_anchor_point.y -= popup_height / 2;
+
+      // Convert the pixel coords back to latlong at the correct zoom, then zoom to them
+      map.flyTo(map.unproject(popup_anchor_point, zoom), zoom, { animate: true, duration: 1 });
     }
   }).addTo(myMap);
-
-  // When a grave is searched for and found
-  graveSearch.on("search:locationfound", function(e) {
-    // Open its popup automatically
-    e.layer.openPopup();
-  });
 }
 
 // Add layer visibility controls to the map
