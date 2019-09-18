@@ -163,15 +163,19 @@ function addSearch() {
 
     // When a location is found, fly there slowly
     moveToLocation: function(latlng, title, map) {
+      // Latitude offset so that it zooms above the point, giving more room for the popup
+      var lat_offset = 0.00002;
+      // Apply the offset to the point's latlng position to create a new target dictionary
+      var latlng_zoom_target = { lat: latlng["lat"] + lat_offset, lng: latlng["lng"] };
       var zoom = 22;
-      map.flyTo(latlng, zoom, { animate: true, duration: 1 });
+      map.flyTo(latlng_zoom_target, zoom, { animate: true, duration: 1 });
     }
   }).addTo(myMap);
 
   // When a grave is searched for and found
   graveSearch.on("search:locationfound", function(e) {
     // Open its popup automatically
-    e.layer.openPopup().openOn(myMap);
+    e.layer.openPopup();
   });
 }
 
