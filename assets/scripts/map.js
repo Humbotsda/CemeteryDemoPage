@@ -239,10 +239,24 @@ function scaleIcons(zoomLevel) {
 
 }
 
+// Auto open the popup closest to the user's position from a given layer
+function openClosestPopup(layer) {
+  const closest_point = leafletKnn(layer).nearest(myMap.getCenter(), 1)[0].layer
+  closest_point.openPopup();
+}
+
 // Control icon size and hide points when zoomed out
 myMap.on("zoomend", function (e) {
   var currentZoom = myMap.getZoom();
   scaleIcons(currentZoom);
+
+  // Zoom level where popups are automatically opened
+  const popupZoom = 25;
+
+  // Auto open popups when zoomed in enough
+  if (currentZoom >= popupZoom) {
+    openClosestPopup(gravePoints);
+  }
 });
 
 addControls();

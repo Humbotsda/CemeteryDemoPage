@@ -24,7 +24,10 @@ function popupTemplate(feature) {
             </table>
         </div>
     `;
-    return templateString;
+
+    const popup = L.popup({ autoPan: true, autoClose: false, keepInView: false, closeOnClick: false }).setContent(templateString)
+
+    return popup
 }
 
 // Return a popup table using the input feature properties
@@ -60,7 +63,10 @@ function videoPopupTemplate(feature) {
             </table>
         </div>
     `;
-    return templateString;
+
+    const popup = L.popup({ autoPan: true, autoClose: false, keepInView: false, closeOnClick: false }).setContent(templateString)
+
+    return popup
 }
 
 // Build and return an html button for an ancestry search link
