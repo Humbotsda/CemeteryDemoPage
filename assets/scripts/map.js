@@ -16,7 +16,7 @@ function addControls() {
   // Add home button
   L.easyButton(
     "fa-home",
-    function(btn, map) {
+    function (btn, map) {
       map.setView([home.lat, home.lng], home.zoom);
     },
     "Zoom To Home",
@@ -123,7 +123,7 @@ function addLegend() {
   });
 
   // When the legend is added to the map...
-  legend.onAdd = function(map) {
+  legend.onAdd = function (map) {
     // Create a div of class custom-legend
     this._div = L.DomUtil.create("div", "custom-legend");
     // Fill the div with the legend HTML
@@ -162,7 +162,7 @@ function addSearch() {
     initial: false,
 
     // When a grave is found in search, fly there slowly
-    moveToLocation: function(latlng, title, map) {
+    moveToLocation: function (latlng, title, map) {
       // Final zoom level to end at
       var zoom = 22;
 
@@ -207,13 +207,8 @@ function addLayerControl() {
     .addTo(myMap);
 }
 
-// Control icon size and hide points when zoomed out
-myMap.on("zoomend", function(e) {
-  var currentZoom = myMap.getZoom();
-  // Layer to hide when zoomed out too far
-  var layer = gravePoints;
-  // Minimum zoom at which the layer will still be visible
-  var minimumZoom = 16;
+// Set grave icon scale based on zoom level
+function scaleIcons(zoomLevel) {
   // Get all icons
   var elements = document.getElementsByClassName("leaflet-marker-icon");
 
@@ -235,12 +230,19 @@ myMap.on("zoomend", function(e) {
 
   // Change the size of all icons using zoomScale
   for (var i = 0; i < elements.length; i++) {
-    elements[i].style.width = zoomScale[currentZoom];
-    elements[i].style.height = zoomScale[currentZoom];
+    elements[i].style.width = zoomScale[zoomLevel];
+    elements[i].style.height = zoomScale[zoomLevel];
     // Margins should be 1/2 of the size, and negative
-    elements[i].style.marginLeft = `${(-1 * parseInt(zoomScale[currentZoom], 10)) / 2}px`;
-    elements[i].style.marginTop = `${(-1 * parseInt(zoomScale[currentZoom], 10)) / 2}px`;
+    elements[i].style.marginLeft = `${(-1 * parseInt(zoomScale[zoomLevel], 10)) / 2}px`;
+    elements[i].style.marginTop = `${(-1 * parseInt(zoomScale[zoomLevel], 10)) / 2}px`;
   }
+
+}
+
+// Control icon size and hide points when zoomed out
+myMap.on("zoomend", function (e) {
+  var currentZoom = myMap.getZoom();
+  scaleIcons(currentZoom);
 });
 
 addControls();
