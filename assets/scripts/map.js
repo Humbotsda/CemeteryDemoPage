@@ -1,11 +1,11 @@
-var home = {
+const home = {
   lat: 40.87955,
   lng: -123.9823,
   zoom: 19
 };
 
 // Create the map
-var myMap = L.map("pointMap", {
+const myMap = L.map("pointMap", {
   zoomSnap: 1,
   center: [home.lat, home.lng],
   zoom: home.zoom,
@@ -37,7 +37,7 @@ function addControls() {
 // Create the basemap
 function createBasemap() {
   // Add basemap
-  var tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  const tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; \
 						<a href="https://carto.com/attributions">CARTO</a>',
@@ -52,7 +52,7 @@ function createBasemap() {
 // Add the orthophoto tileset to the map
 function createOrtho() {
   // Add orthophoto tileset
-  var tileOrtho = L.tileLayer("https://api.mapbox.com/v4/{tilesetId}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  const tileOrtho = L.tileLayer("https://api.mapbox.com/v4/{tilesetId}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: 'Imagery © <a href="http://humbotsda.com">Humbots D&A</a>',
     maxZoom: 25,
     minZoom: 15,
@@ -81,7 +81,7 @@ function createUnoccupiedGravePoints() {
   }
 
   // Load all grave plot points from a JSON into the map
-  var unoccupiedGravePoints = L.geoJSON(graveJSON, {
+  const unoccupiedGravePoints = L.geoJSON(graveJSON, {
     filter: function (feature) { return feature.properties.Status_Des != "Occupied" },
     // Run this function for every feature that is created
     onEachFeature: onEachFeature
@@ -112,7 +112,7 @@ function createOccupiedGravePoints() {
   }
 
   // Load all grave plot points from a JSON into the map
-  var occupiedGravePoints = L.geoJSON(graveJSON, {
+  const occupiedGravePoints = L.geoJSON(graveJSON, {
     filter: function (feature) { return feature.properties.Status_Des === "Occupied" },
     // Run this function for every feature that is created
     onEachFeature: onEachFeature
@@ -124,7 +124,7 @@ function createOccupiedGravePoints() {
 // Create roads layer
 function createRoads() {
   // Load the cemetery roads from a JSON into the map
-  var cemeteryRoads = L.geoJSON(roadJSON, {
+  const cemeteryRoads = L.geoJSON(roadJSON, {
     color: "white",
     opacity: 0.8,
     weight: 2
@@ -136,7 +136,7 @@ function createRoads() {
 // Add legend to the map
 function addLegend() {
   // Create a leaflet control for the legend
-  var legend = L.control({
+  const legend = L.control({
     position: "topleft"
   });
 
@@ -166,7 +166,7 @@ function addLegend() {
 
 // Create and return the search tool for grave points to the map
 function createSearch() {
-  var graveSearch = new L.Control.Search({
+  const graveSearch = new L.Control.Search({
     layer: occupiedGravePoints,
     propertyName: "Name",
     collapsed: false,
@@ -182,22 +182,22 @@ function createSearch() {
     // When a grave is found in search, fly there slowly
     moveToLocation: function (latlng, title, map) {
       // Final zoom level to end at
-      var zoom = 22;
+      const zoomTo = 22;
 
       // Automatically open the popup for that layer
       latlng.layer.openPopup();
 
       // Get the pixel coords of the latlng point at the final zoom level
-      var popup_anchor_point = map.project(latlng, zoom);
+      let popup_anchor_point = map.project(latlng, zoom);
 
       // Get the height of the popup in pixels
-      var popup_height = latlng.layer._popup._container.clientHeight;
+      let popup_height = latlng.layer._popup._container.clientHeight;
 
       // Shift the pixel coords up half the popup height to center the popup in the window
       popup_anchor_point.y -= popup_height / 2;
 
       // Convert the pixel coords back to latlong at the correct zoom, then zoom to them
-      map.flyTo(map.unproject(popup_anchor_point, zoom), zoom, { animate: true, duration: 1 });
+      map.flyTo(map.unproject(popup_anchor_point, zoomTo), zoomTo, { animate: true, duration: 1 });
     }
   }).addTo(myMap);
 
@@ -207,7 +207,7 @@ function createSearch() {
 // Create and return layer visibility controls
 function createLayerControl() {
   // Set up the layers for layer control
-  var layerControlOptions = {
+  const layerControlOptions = {
     base_layers: {},
     overlays: {
       "Street basemap": tileCartoDBVoyager,
@@ -218,7 +218,7 @@ function createLayerControl() {
   };
 
   // Add the layer control to the map
-  let layerControl = L.control
+  const layerControl = L.control
     .layers(layerControlOptions.base_layers, layerControlOptions.overlays, {
       autoZIndex: true,
       collapsed: false,
@@ -231,10 +231,10 @@ function createLayerControl() {
 // Set grave icon scale based on zoom level
 function scaleIcons(zoomLevel) {
   // Get all icons
-  var elements = document.getElementsByClassName("leaflet-marker-icon");
+  let elements = document.getElementsByClassName("leaflet-marker-icon");
 
   // Icon size at different zoom levels
-  var zoomScale = {
+  const zoomScale = {
     14: "0px",
     15: "4px",
     16: "3px",
@@ -250,7 +250,7 @@ function scaleIcons(zoomLevel) {
   };
 
   // Change the size of all icons using zoomScale
-  for (var i = 0; i < elements.length; i++) {
+  for (let i = 0; i < elements.length; i++) {
     elements[i].style.width = zoomScale[zoomLevel];
     elements[i].style.height = zoomScale[zoomLevel];
     // Margins should be 1/2 of the size, and negative
@@ -262,22 +262,15 @@ function scaleIcons(zoomLevel) {
 
 // Auto open the popup closest to the user's position from a given layer
 function openClosestPopup(layer) {
-  // const map_center = myMap.getCenter();
-
-  // let results = 1;
-  // let closest_point = leafletKnn(layer).nearest(map_center, results)[results - 1].layer;
-  // while (closest_point.feature.properties.Status_Des != "Occupied") {
-  //   results += 1;
-  //   console.log(results)
-  //   closest_point = leafletKnn(layer).nearest(map_center, results)[results - 1].layer
-  // }
-  const closest_point = leafletKnn(layer).nearest(myMap.getCenter(), 1)[0].layer
+  // Max distance to from map center to open popup (in meters)
+  const max_search_distance = 2;
+  const closest_point = leafletKnn(layer).nearest(myMap.getCenter(), 1, max_search_distance)[0].layer
   closest_point.openPopup();
 }
 
 // Control icon size and auto open popups on zoom
 myMap.on("zoomend", function (e) {
-  var currentZoom = myMap.getZoom();
+  let currentZoom = myMap.getZoom();
   scaleIcons(currentZoom);
 
   // Zoom level where popups are automatically opened
