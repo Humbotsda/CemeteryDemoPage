@@ -71,17 +71,18 @@ function videoPopupTemplate(feature) {
 
 // Build and return an html button for an ancestry search link
 function returnAncestryLink(name) {
+    let firstName, lastName;
     //  Try splitting the name into first and last
     try {
-        let firstName = name.split(" ")[0];
+        firstName = name.split(" ")[0];
     } catch (err) {
         // Leave the names empty if they aren't found
-        let firstName = "";
+        firstName = "";
     }
     try {
-        let lastName = name.split(" ")[1];
+        lastName = name.split(" ")[1];
     } catch (err) {
-        let lastName = "";
+        lastName = "";
     }
 
     linkTemplate = `
