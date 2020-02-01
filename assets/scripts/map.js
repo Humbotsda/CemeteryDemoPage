@@ -12,6 +12,9 @@ const myMap = L.map("pointMap", {
   preferCanvas: false
 });
 
+// Track last zoom level to test zoom direction
+let lastZoom = myMap.getZoom();
+
 // Add controls to the map
 function addControls() {
   // Add home button
@@ -264,22 +267,30 @@ function scaleIcons(zoomLevel) {
 function openClosestPopup(layer) {
   // Max distance to from map center to open popup (in meters)
   const maxSearchDistance = 2;
-  const closestPoint = leafletKnn(layer).nearest(myMap.getCenter(), 1, maxSearchDistance)[0].layer
-  closestPoint.openPopup();
+  const closestPointSearch = leafletKnn(layer).nearest(myMap.getCenter(), 1, maxSearchDistance);
+
+  // If a point was found within the search distance
+  if (closestPointSearch.length > 0) {
+    const closestPoint = closestPointSearch[0].layer;
+    closestPoint.openPopup();
+  }
 }
+
 
 // Control icon size and auto open popups on zoom
 myMap.on("zoomend", function (e) {
   let currentZoom = myMap.getZoom();
+
   scaleIcons(currentZoom);
 
   // Zoom level where popups are automatically opened
   const popupZoom = 25;
 
-  // Auto open popups when zoomed in enough
-  if (currentZoom >= popupZoom) {
+  // Auto open popups when zooming in close
+  if (currentZoom >= popupZoom && currentZoom > lastZoom) {
     openClosestPopup(occupiedGravePoints);
   }
+  lastZoom = currentZoom;
 });
 
 let occupiedGravePoints = createOccupiedGravePoints();
