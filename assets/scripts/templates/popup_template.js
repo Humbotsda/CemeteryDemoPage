@@ -1,9 +1,9 @@
 // Return a popup table using the input feature properties
 function popupTemplate(feature) {
-    var name = feature.properties.Name;
-    var birth = feature.properties.Birth;
-    var death = feature.properties.Death;
-    const ancestry_link = returnAncestryLink(name);
+    const name = feature.properties.Name;
+    const birth = feature.properties.Birth;
+    const death = feature.properties.Death;
+    const ancestryLink = returnAncestryLink(name);
 
     templateString = `
         <div class="popup-contents">
@@ -20,7 +20,7 @@ function popupTemplate(feature) {
                     <th>Death year</th>
                     <td>${death}</td>
                 </tr>
-                ${ancestry_link}
+                ${ancestryLink}
             </table>
         </div>
     `;
@@ -32,10 +32,10 @@ function popupTemplate(feature) {
 
 // Return a popup table using the input feature properties
 function videoPopupTemplate(feature) {
-    var name = feature.properties.Name;
-    var birth = feature.properties.Birth;
-    var death = feature.properties.Death;
-    const ancestry_link = returnAncestryLink(name);
+    const name = feature.properties.Name;
+    const birth = feature.properties.Birth;
+    const death = feature.properties.Death;
+    const ancestryLink = returnAncestryLink(name);
 
     templateString = `
         <div class="popup-contents">
@@ -59,7 +59,7 @@ function videoPopupTemplate(feature) {
                     <th>Death year</th>
                     <td>${death}</td>
                 </tr>
-                ${ancestry_link}
+                ${ancestryLink}
             </table>
         </div>
     `;
@@ -73,25 +73,25 @@ function videoPopupTemplate(feature) {
 function returnAncestryLink(name) {
     //  Try splitting the name into first and last
     try {
-        var first_name = name.split(" ")[0];
+        let firstName = name.split(" ")[0];
     } catch (err) {
         // Leave the names empty if they aren't found
-        var first_name = "";
+        let firstName = "";
     }
     try {
-        var last_name = name.split(" ")[1];
+        let lastName = name.split(" ")[1];
     } catch (err) {
-        var last_name = "";
+        let lastName = "";
     }
 
-    link_template = `
+    linkTemplate = `
     <tr class="table-button-row">            
         <td colspan="2">
-            <a href="https://www.ancestry.com/search/?name=${first_name}_${last_name}" target="_blank">
+            <a href="https://www.ancestry.com/search/?name=${firstName}_${lastName}" target="_blank">
                 <button>Find ${name} on Ancestry.com</button>
             </a>
         </td>
     </tr>`
 
-    return link_template
+    return linkTemplate
 }

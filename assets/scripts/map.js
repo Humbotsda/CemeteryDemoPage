@@ -188,16 +188,16 @@ function createSearch() {
       latlng.layer.openPopup();
 
       // Get the pixel coords of the latlng point at the final zoom level
-      let popup_anchor_point = map.project(latlng, zoom);
+      let popupAnchorPoint = map.project(latlng, zoom);
 
       // Get the height of the popup in pixels
-      let popup_height = latlng.layer._popup._container.clientHeight;
+      let popupHeight = latlng.layer._popup._container.clientHeight;
 
       // Shift the pixel coords up half the popup height to center the popup in the window
-      popup_anchor_point.y -= popup_height / 2;
+      popupAnchorPoint.y -= popupHeight / 2;
 
       // Convert the pixel coords back to latlong at the correct zoom, then zoom to them
-      map.flyTo(map.unproject(popup_anchor_point, zoomTo), zoomTo, { animate: true, duration: 1 });
+      map.flyTo(map.unproject(popupAnchorPoint, zoomTo), zoomTo, { animate: true, duration: 1 });
     }
   }).addTo(myMap);
 
@@ -263,9 +263,9 @@ function scaleIcons(zoomLevel) {
 // Auto open the popup closest to the user's position from a given layer
 function openClosestPopup(layer) {
   // Max distance to from map center to open popup (in meters)
-  const max_search_distance = 2;
-  const closest_point = leafletKnn(layer).nearest(myMap.getCenter(), 1, max_search_distance)[0].layer
-  closest_point.openPopup();
+  const maxSearchDistance = 2;
+  const closestPoint = leafletKnn(layer).nearest(myMap.getCenter(), 1, maxSearchDistance)[0].layer
+  closestPoint.openPopup();
 }
 
 // Control icon size and auto open popups on zoom
