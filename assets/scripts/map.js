@@ -191,7 +191,7 @@ function createSearch() {
       latlng.layer.openPopup();
 
       // Get the pixel coords of the latlng point at the final zoom level
-      let popupAnchorPoint = map.project(latlng, zoom);
+      let popupAnchorPoint = map.project(latlng, zoomTo);
 
       // Get the height of the popup in pixels
       let popupHeight = latlng.layer._popup._container.clientHeight;
