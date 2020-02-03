@@ -8,7 +8,6 @@ function check() {
 }
 
 // If the browser fails to execute the ES6 code
-if (!check()) 
-{
+if (!check()) {
     alert('Your browser does not support modern Javascript ES6. Features of this site will not work. To use this site, please switch to a modern, compatible browser such as Chrome, Firefox, or Edge.')
 }

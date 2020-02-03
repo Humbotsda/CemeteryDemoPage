@@ -1,22 +1,26 @@
-var home = {
+const home = {
   lat: 40.87955,
   lng: -123.9823,
   zoom: 19
 };
 
 // Create the map
-var myMap = L.map("pointMap", {
+const myMap = L.map("pointMap", {
   zoomSnap: 1,
   center: [home.lat, home.lng],
   zoom: home.zoom,
   preferCanvas: false
 });
 
+// Track last zoom level to test zoom direction
+let lastZoom = myMap.getZoom();
+
+// Add controls to the map
 function addControls() {
   // Add home button
   L.easyButton(
     "fa-home",
-    function(btn, map) {
+    function (btn, map) {
       map.setView([home.lat, home.lng], home.zoom);
     },
     "Zoom To Home",
@@ -33,53 +37,41 @@ function addControls() {
   L.control.betterscale().addTo(myMap);
 }
 
-// Add the street basemap to the map
-function addBasemap() {
+// Create the basemap
+function createBasemap() {
   // Add basemap
-  var tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  const tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; \
 						<a href="https://carto.com/attributions">CARTO</a>',
     subdomains: "abcd",
     maxZoom: 25,
     minZoom: 12
-  }).addTo(myMap);
+  })
 
   return tileCartoDBVoyager;
 }
 
 // Add the orthophoto tileset to the map
-function addOrtho() {
+function createOrtho() {
   // Add orthophoto tileset
-  var tileOrtho = L.tileLayer("https://api.mapbox.com/v4/{tilesetId}/{z}/{x}/{y}.png?access_token={accessToken}", {
+  const tileOrtho = L.tileLayer("https://api.mapbox.com/v4/{tilesetId}/{z}/{x}/{y}.png?access_token={accessToken}", {
     attribution: 'Imagery © <a href="http://humbotsda.com">Humbots D&A</a>',
     maxZoom: 25,
     minZoom: 15,
     accessToken: "pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ",
     tilesetId: "isilme1.bhbathwp"
-  }).addTo(myMap);
+  });
 
   return tileOrtho;
 }
 
-// Add grave point markers, popups, tooltips, and icons to the map
-function addGravePoints() {
+// Create and return unoccupied grave point markers, popups, tooltips, and icons to the map
+function createUnoccupiedGravePoints() {
   // Assign the correct icon to grave plot points based on the plot availability
   function assignIcon(feature, layer) {
-    if (feature.properties.Status_Des == "Occupied") layer.setIcon(blueIcon);
-    else if (feature.properties.Status_Des == "Available") layer.setIcon(goldIcon);
-    else layer.setIcon(purpleIcon);
-  }
-
-  // Assign the correct popup to the grave plot
-  function assignPopup(feature, layer) {
-    // Occupied plots get popups, others don't
-    if (feature.properties.Status_Des == "Occupied")
-      if (feature.properties.Name == "Hannes Becker")
-        // Special video popup for Hannes Becker's grave with custom CSS class
-        layer.bindPopup(videoPopupTemplate(feature), { className: "popupVideo" });
-      // Build a popup table using a template
-      else layer.bindPopup(popupTemplate(feature));
+    if (feature.properties.Status_Des == "Available") layer.setIcon(goldIcon);
+    else if (feature.properties.Status_Des == "Sold") layer.setIcon(purpleIcon);
   }
 
   // Runs every time a feature is added to a geoJSON
@@ -87,30 +79,59 @@ function addGravePoints() {
     // Create a tooltip to show the current plot availability
     layer.bindTooltip(feature.properties.Status_Des);
 
-    // Assign the correct popup
-    assignPopup(feature, layer);
-
     // Assign the correct icon
     assignIcon(feature, layer);
   }
 
   // Load all grave plot points from a JSON into the map
-  var gravePoints = L.geoJSON(graveJSON, {
+  const unoccupiedGravePoints = L.geoJSON(graveJSON, {
+    filter: function (feature) { return feature.properties.Status_Des != "Occupied" },
     // Run this function for every feature that is created
     onEachFeature: onEachFeature
-  }).addTo(myMap);
+  });
 
-  return gravePoints;
+  return unoccupiedGravePoints;
 }
 
-// Add roads to the map
-function addRoads() {
+// Create and return occupied grave point markers, popups, tooltips, and icons to the map
+function createOccupiedGravePoints() {
+  // Assign the correct popup to the grave plot
+  function assignPopup(feature, layer) {
+    if (feature.properties.Name == "Hannes Becker")
+      // Special video popup for Hannes Becker's grave with custom CSS class
+      layer.bindPopup(videoPopupTemplate(feature), { className: "popupVideo" });
+    // Build a popup table using a template
+    else layer.bindPopup(popupTemplate(feature));
+  }
+
+  // Runs every time a feature is added to a geoJSON
+  function onEachFeature(feature, layer) {
+    // Create a tooltip to show the current plot availability
+    layer.bindTooltip(feature.properties.Status_Des);
+    // Assign the correct popup
+    assignPopup(feature, layer);
+    // Assign the correct icon
+    layer.setIcon(blueIcon);
+  }
+
+  // Load all grave plot points from a JSON into the map
+  const occupiedGravePoints = L.geoJSON(graveJSON, {
+    filter: function (feature) { return feature.properties.Status_Des === "Occupied" },
+    // Run this function for every feature that is created
+    onEachFeature: onEachFeature
+  });
+
+  return occupiedGravePoints;
+}
+
+// Create roads layer
+function createRoads() {
   // Load the cemetery roads from a JSON into the map
-  var cemeteryRoads = L.geoJSON(roadJSON, {
+  const cemeteryRoads = L.geoJSON(roadJSON, {
     color: "white",
     opacity: 0.8,
     weight: 2
-  }).addTo(myMap);
+  });
 
   return cemeteryRoads;
 }
@@ -118,12 +139,12 @@ function addRoads() {
 // Add legend to the map
 function addLegend() {
   // Create a leaflet control for the legend
-  var legend = L.control({
+  const legend = L.control({
     position: "topleft"
   });
 
   // When the legend is added to the map...
-  legend.onAdd = function(map) {
+  legend.onAdd = function (map) {
     // Create a div of class custom-legend
     this._div = L.DomUtil.create("div", "custom-legend");
     // Fill the div with the legend HTML
@@ -146,10 +167,10 @@ function addLegend() {
   legend.addTo(myMap);
 }
 
-// Add the search tool for grave points to the map
-function addSearch() {
-  var graveSearch = new L.Control.Search({
-    layer: gravePoints,
+// Create and return the search tool for grave points to the map
+function createSearch() {
+  const graveSearch = new L.Control.Search({
+    layer: occupiedGravePoints,
     propertyName: "Name",
     collapsed: false,
     textPlaceholder: "Search by name...",
@@ -162,63 +183,61 @@ function addSearch() {
     initial: false,
 
     // When a grave is found in search, fly there slowly
-    moveToLocation: function(latlng, title, map) {
+    moveToLocation: function (latlng, title, map) {
       // Final zoom level to end at
-      var zoom = 22;
+      const zoomTo = 22;
 
       // Automatically open the popup for that layer
       latlng.layer.openPopup();
 
       // Get the pixel coords of the latlng point at the final zoom level
-      var popup_anchor_point = map.project(latlng, zoom);
+      let popupAnchorPoint = map.project(latlng, zoom);
 
       // Get the height of the popup in pixels
-      var popup_height = latlng.layer._popup._container.clientHeight;
+      let popupHeight = latlng.layer._popup._container.clientHeight;
 
       // Shift the pixel coords up half the popup height to center the popup in the window
-      popup_anchor_point.y -= popup_height / 2;
+      popupAnchorPoint.y -= popupHeight / 2;
 
       // Convert the pixel coords back to latlong at the correct zoom, then zoom to them
-      map.flyTo(map.unproject(popup_anchor_point, zoom), zoom, { animate: true, duration: 1 });
+      map.flyTo(map.unproject(popupAnchorPoint, zoomTo), zoomTo, { animate: true, duration: 1 });
     }
   }).addTo(myMap);
+
+  return graveSearch
 }
 
-// Add layer visibility controls to the map
-function addLayerControl() {
+// Create and return layer visibility controls
+function createLayerControl() {
   // Set up the layers for layer control
-  var layerControl = {
+  const layerControlOptions = {
     base_layers: {},
     overlays: {
       "Street basemap": tileCartoDBVoyager,
-      Orthoimagery: tileOrtho,
-      "Grave plots": gravePoints,
-      "Cemetery roads": cemeteryRoads
+      "Orthoimagery": tileOrtho,
+      "Grave points": gravePoints,
+      "Cemetery roads": cemeteryRoads,
     }
   };
 
   // Add the layer control to the map
-  L.control
-    .layers(layerControl.base_layers, layerControl.overlays, {
+  const layerControl = L.control
+    .layers(layerControlOptions.base_layers, layerControlOptions.overlays, {
       autoZIndex: true,
       collapsed: false,
       position: "topleft"
-    })
-    .addTo(myMap);
+    });
+
+  return layerControl;
 }
 
-// Control icon size and hide points when zoomed out
-myMap.on("zoomend", function(e) {
-  var currentZoom = myMap.getZoom();
-  // Layer to hide when zoomed out too far
-  var layer = gravePoints;
-  // Minimum zoom at which the layer will still be visible
-  var minimumZoom = 16;
+// Set grave icon scale based on zoom level
+function scaleIcons(zoomLevel) {
   // Get all icons
-  var elements = document.getElementsByClassName("leaflet-marker-icon");
+  let elements = document.getElementsByClassName("leaflet-marker-icon");
 
   // Icon size at different zoom levels
-  var zoomScale = {
+  const zoomScale = {
     14: "0px",
     15: "4px",
     16: "3px",
@@ -234,21 +253,54 @@ myMap.on("zoomend", function(e) {
   };
 
   // Change the size of all icons using zoomScale
-  for (var i = 0; i < elements.length; i++) {
-    elements[i].style.width = zoomScale[currentZoom];
-    elements[i].style.height = zoomScale[currentZoom];
+  for (let i = 0; i < elements.length; i++) {
+    elements[i].style.width = zoomScale[zoomLevel];
+    elements[i].style.height = zoomScale[zoomLevel];
     // Margins should be 1/2 of the size, and negative
-    elements[i].style.marginLeft = `${(-1 * parseInt(zoomScale[currentZoom], 10)) / 2}px`;
-    elements[i].style.marginTop = `${(-1 * parseInt(zoomScale[currentZoom], 10)) / 2}px`;
+    elements[i].style.marginLeft = `${(-1 * parseInt(zoomScale[zoomLevel], 10)) / 2}px`;
+    elements[i].style.marginTop = `${(-1 * parseInt(zoomScale[zoomLevel], 10)) / 2}px`;
   }
+
+}
+
+// Auto open the popup closest to the user's position from a given layer
+function openClosestPopup(layer) {
+  // Max distance to from map center to open popup (in meters)
+  const maxSearchDistance = 2;
+  const closestPointSearch = leafletKnn(layer).nearest(myMap.getCenter(), 1, maxSearchDistance);
+
+  // If a point was found within the search distance
+  if (closestPointSearch.length > 0) {
+    const closestPoint = closestPointSearch[0].layer;
+    closestPoint.openPopup();
+  }
+}
+
+
+// Control icon size and auto open popups on zoom
+myMap.on("zoomend", function (e) {
+  let currentZoom = myMap.getZoom();
+
+  scaleIcons(currentZoom);
+
+  // Zoom level where popups are automatically opened
+  const popupZoom = 25;
+
+  // Auto open popups when zooming in close
+  if (currentZoom >= popupZoom && currentZoom > lastZoom) {
+    openClosestPopup(occupiedGravePoints);
+  }
+  lastZoom = currentZoom;
 });
 
-addControls();
-var gravePoints = addGravePoints();
-var cemeteryRoads = addRoads();
-var tileCartoDBVoyager = addBasemap();
-var tileOrtho = addOrtho();
+let occupiedGravePoints = createOccupiedGravePoints();
+let unoccupiedGravePoints = createUnoccupiedGravePoints();
+let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
+let cemeteryRoads = createRoads().addTo(myMap);
+let tileCartoDBVoyager = createBasemap().addTo(myMap);
+let tileOrtho = createOrtho().addTo(myMap);
 
-addSearch();
-addLayerControl();
+let searchTool = createSearch().addTo(myMap);
+let layerControl = createLayerControl().addTo(myMap);
+addControls();
 addLegend();
