@@ -13,3 +13,15 @@ body {
   right: 0;
   left: 0;
 }
+
+.leaflet-control-search .search-button, .leaflet-control-search .search-button:hover {
+  background: url('../images/search-icon.png');
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+}
+
+.leaflet-control-search .search-button:hover {
+  background: url('../images/search-icon-hover.png');
+  background-size: 30px 30px;
+  background-repeat: no-repeat;
+}
