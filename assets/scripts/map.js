@@ -202,7 +202,7 @@ function createSearch() {
       // Convert the pixel coords back to latlong at the correct zoom, then zoom to them
       map.flyTo(map.unproject(popupAnchorPoint, zoomTo), zoomTo, { animate: true, duration: 1 });
     }
-  }).addTo(myMap);
+  });
 
   return graveSearch
 }
