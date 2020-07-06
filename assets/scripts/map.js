@@ -348,8 +348,7 @@ let unoccupiedGravePoints = createUnoccupiedGravePoints();
 let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
 let cemeteryRoads = createRoads().addTo(myMap);
 let tileCartoDBVoyager = createBasemap().addTo(myMap);
-//let tileOrtho = createOrtho().addTo(myMap);
-let tileOrtho = tileCartoDBVoyager;
+let tileOrtho = createOrtho().addTo(myMap);
 
 let searchTool = createSearch().addTo(myMap);
 let layerControl = createLayerControl().addTo(myMap);
