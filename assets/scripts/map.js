@@ -41,9 +41,9 @@ function addControls() {
 }
 
 // Create the basemap
-function createBasemap() {
+function createStreetBasemap() {
   // Add basemap
-  const tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  const basemap = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; \
 						<a href="https://carto.com/attributions">CARTO</a>',
@@ -52,7 +52,19 @@ function createBasemap() {
     minZoom: 12
   })
 
-  return tileCartoDBVoyager;
+  return basemap;
+}
+
+// Create the basemap
+function createSatelliteBasemap() {
+  const basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    maxZoom: 19,
+    minZoom: 12,
+    hidden: true,
+  });
+
+  return basemap;
 }
 
 // Add the orthophoto tileset to the map
@@ -63,7 +75,8 @@ function createOrtho() {
     maxZoom: 25,
     minZoom: 15,
     accessToken: "pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ",
-    tilesetId: "isilme1.bhbathwp"
+    tilesetId: "isilme1.bhbathwp",
+    zIndex: 999,
   });
 
   return tileOrtho;
@@ -110,7 +123,7 @@ function createOccupiedGravePoints() {
   // Runs every time a feature is added to a geoJSON
   function onEachFeature(feature, layer) {
     // Create a tooltip to show the current plot availability
-    layer.bindTooltip(feature.properties.Status_Des);
+    layer.bindTooltip(feature.properties.Name);
     // Assign the correct popup
     assignPopup(feature, layer);
     // Assign the correct icon
@@ -216,14 +229,13 @@ function createLayerControl() {
   const layerControlOptions = {
     base_layers: {},
     overlays: {
-      "Street basemap": tileCartoDBVoyager,
+      "Street basemap": streetBasemap,
       "Orthoimagery": tileOrtho,
       "Grave points": gravePoints,
       "Cemetery roads": cemeteryRoads,
     }
   };
 
-  // Add the layer control to the map
   const layerControl = L.control
     .layers(layerControlOptions.base_layers, layerControlOptions.overlays, {
       autoZIndex: true,
@@ -232,6 +244,34 @@ function createLayerControl() {
     });
 
   return layerControl;
+}
+
+function createGroupedLayerControl() {
+  let groupedOverlays = {
+    "Graves": {
+      "Occupied": occupiedGravePoints,
+      "Unoccupied": unoccupiedGravePoints,
+    },
+    "Other": {
+      "Cemetery roads": cemeteryRoads,
+      "Orthoimagery": tileOrtho,
+    },
+    "Basemap": {
+      "Satellite": satBasemap,
+      "Streets": streetBasemap,
+    },
+  };
+
+  let groupedLayerControl = L.control
+    .groupedLayers({}, groupedOverlays, {
+      autoZIndex: false,
+      collapsed: false,
+      position: "topleft",
+      groupCheckboxes: false,
+      exclusiveGroups: ["Basemap"]
+    });
+
+  return groupedLayerControl;
 }
 
 // Set grave icon scale based on zoom level
@@ -347,7 +387,9 @@ let occupiedGravePoints = createOccupiedGravePoints();
 let unoccupiedGravePoints = createUnoccupiedGravePoints();
 let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
 let cemeteryRoads = createRoads().addTo(myMap);
-let tileCartoDBVoyager = createBasemap().addTo(myMap);
+
+let streetBasemap = createStreetBasemap().addTo(myMap);
+
 let tileOrtho = createOrtho().addTo(myMap);
 
 let searchTool = createSearch().addTo(myMap);
