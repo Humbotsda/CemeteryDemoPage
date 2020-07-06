@@ -281,7 +281,8 @@ function openClosestPopup(layer) {
 
 myMap.on('popupopen', function (e) {
   if (e.popup._source.feature.properties.Name === "Hannes Becker") {
-    highlightRelatives();
+    let relatives = getRelatives()
+    highlightRelatives(relatives);
   };
 })
 
@@ -291,13 +292,23 @@ myMap.on('popupclose', function (e) {
   };
 })
 
-// Highlight a predetermined set of graves.
-function highlightRelatives() {
-  // Layer indexes for graves that are relatives of Hannes Becker
+// Eventually, this will query the backend to get a list of relative grave IDs for a given grave ID and return it. Currently, it just returns a pre-set list of graves
+function getRelatives(graveID = 0) {
+  // Pre-set layer indexes for graves that are relatives of Hannes Becker
   const relativeIndexes = [92, 104, 79, 110, 112, 128];
+  let relatives = [];
 
   for (let i = 0; i < relativeIndexes.length; i++) {
-    let relative = occupiedGravePoints.getLayer(relativeIndexes[i]);
+    relatives.push(occupiedGravePoints.getLayer(relativeIndexes[i]));
+  }
+
+  return relatives;
+}
+
+// Highlight a predetermined set of graves.
+function highlightRelatives(relatives) {
+  for (let i = 0; i < relatives.length; i++) {
+    let relative = relatives[i];
     let position = relative.feature.geometry.coordinates;
     let newMarker = L.circleMarker([position[1], position[0]], {
       color: 'red',
