@@ -12,6 +12,9 @@ const myMap = L.map("pointMap", {
   preferCanvas: false
 });
 
+// Highlight markers for the relatives of Hannes Becker
+let relativeMarkers = [];
+
 // Track last zoom level to test zoom direction
 let lastZoom = myMap.getZoom();
 
@@ -276,6 +279,42 @@ function openClosestPopup(layer) {
   }
 }
 
+myMap.on('popupopen', function (e) {
+  if (e.popup._source.feature.properties.Name === "Hannes Becker") {
+    highlightRelatives();
+  };
+})
+
+myMap.on('popupclose', function (e) {
+  if (e.popup._source.feature.properties.Name === "Hannes Becker") {
+    removeRelatives();
+  };
+})
+
+// Highlight a predetermined set of graves.
+function highlightRelatives() {
+  // Layer indexes for graves that are relatives of Hannes Becker
+  const relativeIndexes = [92, 104, 79, 110, 112, 128];
+
+  for (let i = 0; i < relativeIndexes.length; i++) {
+    let relative = occupiedGravePoints.getLayer(relativeIndexes[i]);
+    let position = relative.feature.geometry.coordinates;
+    let newMarker = L.circleMarker([position[1], position[0]], {
+      color: 'red',
+    }).addTo(myMap);
+    relativeMarkers.push(newMarker);
+  }
+}
+
+// Delete all highlighting markers for relatives
+function removeRelatives() {
+  for (let i = 0; i < relativeMarkers.length; i++) {
+    myMap.removeLayer(relativeMarkers[i])
+  }
+
+  relativeMarkers = [];
+}
+
 
 // Control icon size and auto open popups on zoom
 myMap.on("zoomend", function (e) {
@@ -298,7 +337,8 @@ let unoccupiedGravePoints = createUnoccupiedGravePoints();
 let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
 let cemeteryRoads = createRoads().addTo(myMap);
 let tileCartoDBVoyager = createBasemap().addTo(myMap);
-let tileOrtho = createOrtho().addTo(myMap);
+//let tileOrtho = createOrtho().addTo(myMap);
+let tileOrtho = tileCartoDBVoyager;
 
 let searchTool = createSearch().addTo(myMap);
 let layerControl = createLayerControl().addTo(myMap);
