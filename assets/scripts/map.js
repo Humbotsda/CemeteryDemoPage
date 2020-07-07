@@ -76,7 +76,6 @@ function createOrtho() {
     minZoom: 15,
     accessToken: "pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ",
     tilesetId: "isilme1.bhbathwp",
-    zIndex: 999,
   });
 
   return tileOrtho;
@@ -220,7 +219,7 @@ function createSearch() {
     }
   });
 
-  return graveSearch
+  return graveSearch;
 }
 
 // Create and return layer visibility controls
@@ -352,6 +351,7 @@ function highlightRelatives(relatives) {
     let position = relative.feature.geometry.coordinates;
     let newMarker = L.circleMarker([position[1], position[0]], {
       color: 'red',
+      className: 'highlight-marker'
     }).addTo(myMap);
     relativeMarkers.push(newMarker);
   }
