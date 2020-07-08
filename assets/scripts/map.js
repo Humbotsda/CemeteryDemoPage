@@ -164,16 +164,14 @@ function addLegend() {
     this._div = L.DomUtil.create("div", "custom-legend");
     // Fill the div with the legend HTML
     this._div.innerHTML = `
-							<div id='maplegend' class='leaflet-control-layerss'>
-								<div class='legend-title'>Plot status
-								</div>
-								<div class='legend-scale'>
+							<div class='leaflet-control-legend'>
+                <h4 class="legend-title">Plot status
+								</h4>
 									<ul class='legend-labels'>
 										<li><span style='background:rgb(68, 140, 203);opacity:1;'></span>Occupied</li>
 										<li><span style='background:rgb(212, 198, 37);opacity:1;'></span>Available</li>
 										<li><span style='background:rgb(203, 68, 109);opacity:1;'></span>Sold</li>
 									</ul>
-								</div>
 							</div>
 						`;
     return this._div;
