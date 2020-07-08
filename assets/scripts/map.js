@@ -164,22 +164,21 @@ function addLegend() {
     this._div = L.DomUtil.create("div", "leaflet-control-legend");
     // Fill the div with the legend HTML
     this._div.innerHTML = `
-                <h4 class="leaflet-control-legend-title">Plot status
-								</h4>                
-                  <div class='leaflet-control-legend-labels'>
-                    <div>
-                      <i class="leaflet-control-legend-icon" style='background:rgb(68, 140, 203);'></i>
-                      <span>Occupied</span>
-                    </div>
-                    <div>
-                      <i class="leaflet-control-legend-icon" style='background:rgb(212, 198, 37);'></i>
-                      <span>Available</span>
-                    </div>
-                    <div>
-                      <i class="leaflet-control-legend-icon" style='background:rgb(203, 68, 109);'></i>
-                      <span>Sold</span>
-                    </div>
-						`;
+      <h4 class="leaflet-control-legend-title">Plot status
+      </h4>                
+      <div>
+        <img src="../assets/icons/grave_icon_blue.png" class="leaflet-control-legend-icon" style='background:rgb(68, 140, 203);'></img>
+        <span>Occupied</span>
+      </div>
+      <div>
+        <img src="../assets/icons/grave_icon_gold.png" class="leaflet-control-legend-icon" style='background:rgb(212, 198, 37);'></img>
+        <span>Available</span>
+      </div>
+      <div>
+        <img src="../assets/icons/grave_icon_purple.png" class="leaflet-control-legend-icon" style='background:rgb(203, 68, 109);'></img>
+        <span>Sold</span>
+      </div>
+    `;
     return this._div;
   };
 

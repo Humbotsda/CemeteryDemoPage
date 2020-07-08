@@ -1,24 +1,12 @@
 .leaflet-control-legend-icon {
-  display: inline-block;
   position: relative;
-  margin-top: 2px;
-  margin-right: 4px;
-  top: 1px;
-
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  
-  height: 13px;
-  width: 13px;
-  border-radius: 2px;
-}
-
-.leaflet-control-legend-labels {
-  padding: 2px;
-  margin: 0;
+  margin: 0px 3px 0px 4px;
+  top: 2px;
+  height: 15px;
 }
 
 .leaflet-control-legend-title {
-  margin: 0;
+  margin: 3px;
 }
 
 .leaflet-control-legend {
