@@ -161,18 +161,24 @@ function addLegend() {
   // When the legend is added to the map...
   legend.onAdd = function (map) {
     // Create a div of class custom-legend
-    this._div = L.DomUtil.create("div", "custom-legend");
+    this._div = L.DomUtil.create("div", "leaflet-control-legend");
     // Fill the div with the legend HTML
     this._div.innerHTML = `
-							<div class='leaflet-control-legend'>
-                <h4 class="legend-title">Plot status
-								</h4>
-									<ul class='legend-labels'>
-										<li><span style='background:rgb(68, 140, 203);opacity:1;'></span>Occupied</li>
-										<li><span style='background:rgb(212, 198, 37);opacity:1;'></span>Available</li>
-										<li><span style='background:rgb(203, 68, 109);opacity:1;'></span>Sold</li>
-									</ul>
-							</div>
+                <h4 class="leaflet-control-legend-title">Plot status
+								</h4>                
+                  <div class='leaflet-control-legend-labels'>
+                    <div>
+                      <i class="leaflet-control-legend-icon" style='background:rgb(68, 140, 203);'></i>
+                      <span>Occupied</span>
+                    </div>
+                    <div>
+                      <i class="leaflet-control-legend-icon" style='background:rgb(212, 198, 37);'></i>
+                      <span>Available</span>
+                    </div>
+                    <div>
+                      <i class="leaflet-control-legend-icon" style='background:rgb(203, 68, 109);'></i>
+                      <span>Sold</span>
+                    </div>
 						`;
     return this._div;
   };

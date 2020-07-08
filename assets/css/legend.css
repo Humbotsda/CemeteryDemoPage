@@ -1,22 +1,23 @@
-ul.legend-labels li span {
-  float: left;
-  height: 16px;
-  width: 30px;
-  margin-right: 5px;
-  border: 1px solid #999;
+.leaflet-control-legend-icon {
+  display: inline-block;
+  position: relative;
+  margin-top: 2px;
+  margin-right: 4px;
+  top: 1px;
+
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  
+  height: 13px;
+  width: 13px;
+  border-radius: 2px;
 }
 
-.legend-labels {
-  list-style: none;
+.leaflet-control-legend-labels {
   padding: 2px;
   margin: 0;
 }
 
-.legend-labels li {
-  padding-top: 4px;
-}
-
-.legend-title {
+.leaflet-control-legend-title {
   margin: 0;
 }
 
@@ -26,4 +27,5 @@ ul.legend-labels li span {
   background: #fff;
   border: 2px solid rgba(0, 0, 0, 0.2);
   border-radius: 5px;
+  background-clip: padding-box;
 }
