@@ -25,3 +25,8 @@ body {
   background-size: 30px 30px;
   background-repeat: no-repeat;
 }
+
+.highlight-marker {
+  stroke-width: 2px;
+  fill-opacity: 0.0;
+}

@@ -12,6 +12,9 @@ const myMap = L.map("pointMap", {
   preferCanvas: false
 });
 
+// Highlight markers for the relatives of Hannes Becker
+let relativeMarkers = [];
+
 // Track last zoom level to test zoom direction
 let lastZoom = myMap.getZoom();
 
@@ -38,9 +41,9 @@ function addControls() {
 }
 
 // Create the basemap
-function createBasemap() {
+function createStreetBasemap() {
   // Add basemap
-  const tileCartoDBVoyager = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
+  const basemap = L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
     attribution:
       '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; \
 						<a href="https://carto.com/attributions">CARTO</a>',
@@ -49,7 +52,19 @@ function createBasemap() {
     minZoom: 12
   })
 
-  return tileCartoDBVoyager;
+  return basemap;
+}
+
+// Create the basemap
+function createSatelliteBasemap() {
+  const basemap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
+    maxZoom: 19,
+    minZoom: 12,
+    hidden: true,
+  });
+
+  return basemap;
 }
 
 // Add the orthophoto tileset to the map
@@ -59,8 +74,8 @@ function createOrtho() {
     attribution: 'Imagery © <a href="http://humbotsda.com">Humbots D&A</a>',
     maxZoom: 25,
     minZoom: 15,
-    accessToken: "pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ",
-    tilesetId: "isilme1.bhbathwp"
+    accessToken: "pk.eyJ1IjoiaHVtYm90c2RhIiwiYSI6ImNra3N2NjFsdTE0b24yc3FrcmZnOHR5cDkifQ.f15sw_I9RqF999QUhSqW_w",
+    tilesetId: "humbotsda.9a9z6u9z",
   });
 
   return tileOrtho;
@@ -87,7 +102,7 @@ function createUnoccupiedGravePoints() {
   const unoccupiedGravePoints = L.geoJSON(graveJSON, {
     filter: function (feature) { return feature.properties.Status_Des != "Occupied" },
     // Run this function for every feature that is created
-    onEachFeature: onEachFeature
+    onEachFeature: onEachFeature,
   });
 
   return unoccupiedGravePoints;
@@ -107,7 +122,7 @@ function createOccupiedGravePoints() {
   // Runs every time a feature is added to a geoJSON
   function onEachFeature(feature, layer) {
     // Create a tooltip to show the current plot availability
-    layer.bindTooltip(feature.properties.Status_Des);
+    layer.bindTooltip(feature.properties.Name);
     // Assign the correct popup
     assignPopup(feature, layer);
     // Assign the correct icon
@@ -134,37 +149,6 @@ function createRoads() {
   });
 
   return cemeteryRoads;
-}
-
-// Add legend to the map
-function addLegend() {
-  // Create a leaflet control for the legend
-  const legend = L.control({
-    position: "topleft"
-  });
-
-  // When the legend is added to the map...
-  legend.onAdd = function (map) {
-    // Create a div of class custom-legend
-    this._div = L.DomUtil.create("div", "custom-legend");
-    // Fill the div with the legend HTML
-    this._div.innerHTML = `
-							<div id='maplegend' class='leaflet-control-layerss'>
-								<div class='legend-title'>Plot status
-								</div>
-								<div class='legend-scale'>
-									<ul class='legend-labels'>
-										<li><span style='background:rgb(68, 140, 203);opacity:1;'></span>Occupied</li>
-										<li><span style='background:rgb(212, 198, 37);opacity:1;'></span>Available</li>
-										<li><span style='background:rgb(203, 68, 109);opacity:1;'></span>Sold</li>
-									</ul>
-								</div>
-							</div>
-						`;
-    return this._div;
-  };
-
-  legend.addTo(myMap);
 }
 
 // Create and return the search tool for grave points to the map
@@ -204,23 +188,21 @@ function createSearch() {
     }
   });
 
-  return graveSearch
+  return graveSearch;
 }
 
 // Create and return layer visibility controls
 function createLayerControl() {
   // Set up the layers for layer control
   const layerControlOptions = {
-    base_layers: {},
+    base_layers: { "Street basemap": streetBasemap, "Satellite basemap": satBasemap },
     overlays: {
-      "Street basemap": tileCartoDBVoyager,
+      "Graves": gravePoints,
       "Orthoimagery": tileOrtho,
-      "Grave points": gravePoints,
       "Cemetery roads": cemeteryRoads,
     }
   };
 
-  // Add the layer control to the map
   const layerControl = L.control
     .layers(layerControlOptions.base_layers, layerControlOptions.overlays, {
       autoZIndex: true,
@@ -276,6 +258,54 @@ function openClosestPopup(layer) {
   }
 }
 
+myMap.on('popupopen', function (e) {
+  if (e.popup._source.feature.properties.Name === "Hannes Becker") {
+    let relatives = getRelatives()
+    highlightRelatives(relatives);
+  };
+})
+
+myMap.on('popupclose', function (e) {
+  if (e.popup._source.feature.properties.Name === "Hannes Becker") {
+    removeRelatives();
+  };
+})
+
+// Eventually, this will query the backend to get a list of relative grave IDs for a given grave ID and return it. Currently, it just returns a pre-set list of graves
+function getRelatives(graveID = 0) {
+  // Pre-set layer indexes for graves that are relatives of Hannes Becker
+  const relativeIndexes = [92, 104, 79, 110, 112, 128];
+  let relatives = [];
+
+  for (let i = 0; i < relativeIndexes.length; i++) {
+    relatives.push(occupiedGravePoints.getLayer(relativeIndexes[i]));
+  }
+
+  return relatives;
+}
+
+// Highlight a predetermined set of graves.
+function highlightRelatives(relatives) {
+  for (let i = 0; i < relatives.length; i++) {
+    let relative = relatives[i];
+    let position = relative.feature.geometry.coordinates;
+    let newMarker = L.circleMarker([position[1], position[0]], {
+      color: 'red',
+      className: 'highlight-marker'
+    }).addTo(myMap);
+    relativeMarkers.push(newMarker);
+  }
+}
+
+// Delete all highlighting markers for relatives
+function removeRelatives() {
+  for (let i = 0; i < relativeMarkers.length; i++) {
+    myMap.removeLayer(relativeMarkers[i])
+  }
+
+  relativeMarkers = [];
+}
+
 
 // Control icon size and auto open popups on zoom
 myMap.on("zoomend", function (e) {
@@ -295,12 +325,35 @@ myMap.on("zoomend", function (e) {
 
 let occupiedGravePoints = createOccupiedGravePoints();
 let unoccupiedGravePoints = createUnoccupiedGravePoints();
-let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
+
+let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints], { style: { interactive: false } }).addTo(myMap);
+
 let cemeteryRoads = createRoads().addTo(myMap);
-let tileCartoDBVoyager = createBasemap().addTo(myMap);
+
+let satBasemap = createSatelliteBasemap();
+let streetBasemap = createStreetBasemap().addTo(myMap);
+
 let tileOrtho = createOrtho().addTo(myMap);
 
 let searchTool = createSearch().addTo(myMap);
 let layerControl = createLayerControl().addTo(myMap);
 addControls();
-addLegend();
+
+let dummyOccupiedMarker = L.marker([], { icon: blueIcon });
+let dummyAvailableMarker = L.marker([], { icon: goldIcon });
+let dummySoldMarker = L.marker([], { icon: purpleIcon });
+
+// Legend items
+let items = {
+  "Occupied": dummyOccupiedMarker,
+  "Available": dummyAvailableMarker,
+  "Sold": dummySoldMarker,
+}
+
+let legend = L.control.featureLegend(items, {
+  position: "topleft",
+  title: "Markers",
+  maxSymbolSize: 12,
+  symbolContainerSize: 16,
+  symbolScaling: "maximum"
+}).addTo(myMap);

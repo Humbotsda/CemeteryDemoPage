@@ -9,7 +9,6 @@
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
-
   <!-- Include Leaflet -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
     integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
@@ -23,8 +22,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-search@2.9.7/dist/leaflet-search.min.css" />
 
   <!-- Include easyButton -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.css" />
-  <script src="https://cdn.jsdelivr.net/npm/leaflet-easybutton@2/src/easy-button.js"></script>
+  <link rel="stylesheet" href="assets/css/easy-button.css" />
+  <script src="assets/scripts/include/easy-button.js"></script>
 
   <!-- Include fullScreen -->
   <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
@@ -32,8 +31,11 @@
     rel="stylesheet" />
 
   <!-- Include betterScaleBar -->
-  <script src="https://daniellsu.github.io/leaflet-betterscale/L.Control.BetterScale.js"></script>
-  <link href="https://daniellsu.github.io/leaflet-betterscale/L.Control.BetterScale.css" rel="stylesheet" />
+  <script src="assets/scripts/include/L.Control.BetterScale.js"></script>
+  <link rel="stylesheet" href="assets/css/L.Control.BetterScale.css" />
+
+  <link rel="stylesheet" href="assets/css/feature-legend.css" />
+  <script src="assets/scripts/include/feature-legend.js"></script>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 
@@ -46,7 +48,8 @@
 <body>
   <div id="pointMap" style="height: 100%; width: 100%; position: relative"
     class="leaflet-container leaflet-touch leaflet-fade-anim leaflet-grab leaflet-touch-drag"></div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="assets/scripts/include/jquery.min.js"></script>
+
 
   <script src="assets/data/points.js"></script>
   <script src="assets/data/roads.js"></script>

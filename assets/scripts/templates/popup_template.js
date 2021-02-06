@@ -6,24 +6,18 @@ function popupTemplate(feature) {
     const ancestryLink = returnAncestryLink(name);
 
     templateString = `
+    <div class="popup">
+        <header class = "popup-header">
+            <div class="popup-name">${name}</div>
+            <div class="popup-years">${birth} - ${death}</div>
+            <hr />
+        </header>
+        
         <div class="popup-contents">
-            <table class="popup-table">
-                <tr>
-                    <th>Name</th>
-                    <td>${name}</td>
-                </tr>
-                <tr>
-                    <th>Birth year</th>
-                    <td>${birth}</td>
-                </tr>
-                <tr>
-                    <th>Death year</th>
-                    <td>${death}</td>
-                </tr>
-                ${ancestryLink}
-            </table>
+            ${ancestryLink}
         </div>
-    `;
+    </div>
+`;
 
     const popup = L.popup({ autoPan: true, autoClose: false, keepInView: false, closeOnClick: false }).setContent(templateString)
 
@@ -38,29 +32,22 @@ function videoPopupTemplate(feature) {
     const ancestryLink = returnAncestryLink(name);
 
     templateString = `
-        <div class="popup-contents">
-            <table class="popup-table">
-                <tr>
-                    <td colspan="2">
-                        <iframe width="300" height="200" src="https://www.youtube.com/embed/wg3ywGdyCm8" frameborder="0" 
-                            allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
-                        </iframe>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Name</th>
-                    <td>${name}</td>
-                </tr>
-                <tr>
-                    <th>Birth year</th>
-                    <td>${birth}</td>
-                </tr>
-                <tr>
-                    <th>Death year</th>
-                    <td>${death}</td>
-                </tr>
+        <div class="popup">
+            <div class="popup-media">
+                <iframe width="300" height="200" src="https://www.youtube.com/embed/wg3ywGdyCm8" frameborder="0" 
+                    allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+                </iframe>
+            </div>
+
+            <header class = "popup-header">
+                <div class="popup-name">${name}</div>
+                <div class="popup-years">${birth} - ${death}</div>
+                <hr />
+            </header>
+            
+            <div class="popup-contents">
                 ${ancestryLink}
-            </table>
+            </div>
         </div>
     `;
 
@@ -86,13 +73,10 @@ function returnAncestryLink(name) {
     }
 
     linkTemplate = `
-    <tr class="table-button-row">            
-        <td colspan="2">
             <a href="https://www.ancestry.com/search/?name=${firstName}_${lastName}" target="_blank">
                 <button>Find ${name} on Ancestry.com</button>
             </a>
-        </td>
-    </tr>`
+    `
 
     return linkTemplate
 }
