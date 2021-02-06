@@ -102,7 +102,7 @@ function createUnoccupiedGravePoints() {
   const unoccupiedGravePoints = L.geoJSON(graveJSON, {
     filter: function (feature) { return feature.properties.Status_Des != "Occupied" },
     // Run this function for every feature that is created
-    onEachFeature: onEachFeature
+    onEachFeature: onEachFeature,
   });
 
   return unoccupiedGravePoints;
@@ -195,11 +195,10 @@ function createSearch() {
 function createLayerControl() {
   // Set up the layers for layer control
   const layerControlOptions = {
-    base_layers: {},
+    base_layers: { "Street basemap": streetBasemap, "Satellite basemap": satBasemap },
     overlays: {
-      "Street basemap": streetBasemap,
+      "Graves": gravePoints,
       "Orthoimagery": tileOrtho,
-      "Grave points": gravePoints,
       "Cemetery roads": cemeteryRoads,
     }
   };
@@ -212,34 +211,6 @@ function createLayerControl() {
     });
 
   return layerControl;
-}
-
-function createGroupedLayerControl() {
-  let groupedOverlays = {
-    "Graves": {
-      "Occupied": occupiedGravePoints,
-      "Unoccupied": unoccupiedGravePoints,
-    },
-    "Other": {
-      "Cemetery roads": cemeteryRoads,
-      "Orthoimagery": tileOrtho,
-    },
-    "Basemap": {
-      "Satellite": satBasemap,
-      "Streets": streetBasemap,
-    },
-  };
-
-  let groupedLayerControl = L.control
-    .groupedLayers({}, groupedOverlays, {
-      autoZIndex: false,
-      collapsed: false,
-      position: "topleft",
-      groupCheckboxes: false,
-      exclusiveGroups: ["Basemap"]
-    });
-
-  return groupedLayerControl;
 }
 
 // Set grave icon scale based on zoom level
@@ -354,9 +325,12 @@ myMap.on("zoomend", function (e) {
 
 let occupiedGravePoints = createOccupiedGravePoints();
 let unoccupiedGravePoints = createUnoccupiedGravePoints();
-let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints]).addTo(myMap);
+
+let gravePoints = L.layerGroup([occupiedGravePoints, unoccupiedGravePoints], { style: { interactive: false } }).addTo(myMap);
+
 let cemeteryRoads = createRoads().addTo(myMap);
 
+let satBasemap = createSatelliteBasemap();
 let streetBasemap = createStreetBasemap().addTo(myMap);
 
 let tileOrtho = createOrtho().addTo(myMap);
@@ -378,5 +352,8 @@ let items = {
 
 let legend = L.control.featureLegend(items, {
   position: "topleft",
-  title: "Plot status",
+  title: "Markers",
+  maxSymbolSize: 12,
+  symbolContainerSize: 16,
+  symbolScaling: "maximum"
 }).addTo(myMap);
