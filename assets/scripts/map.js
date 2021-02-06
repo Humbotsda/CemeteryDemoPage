@@ -74,8 +74,8 @@ function createOrtho() {
     attribution: 'Imagery © <a href="http://humbotsda.com">Humbots D&A</a>',
     maxZoom: 25,
     minZoom: 15,
-    accessToken: "pk.eyJ1IjoiaXNpbG1lMSIsImEiOiJjanR3amZvOW8yOHVzM3ltc2x3b3BibmtwIn0.St3CYo8jaThhr_HrV1QXdQ",
-    tilesetId: "isilme1.bhbathwp",
+    accessToken: "pk.eyJ1IjoiaHVtYm90c2RhIiwiYSI6ImNra3N2NjFsdTE0b24yc3FrcmZnOHR5cDkifQ.f15sw_I9RqF999QUhSqW_w",
+    tilesetId: "humbotsda.9a9z6u9z",
   });
 
   return tileOrtho;
@@ -149,40 +149,6 @@ function createRoads() {
   });
 
   return cemeteryRoads;
-}
-
-// Add legend to the map
-function addLegend() {
-  // Create a leaflet control for the legend
-  const legend = L.control({
-    position: "topleft"
-  });
-
-  // When the legend is added to the map...
-  legend.onAdd = function (map) {
-    // Create a div of class custom-legend
-    this._div = L.DomUtil.create("div", "leaflet-control-legend");
-    // Fill the div with the legend HTML
-    this._div.innerHTML = `
-      <h4 class="leaflet-control-legend-title">Plot status
-      </h4>                
-      <div>
-        <img src="../assets/icons/grave_icon_blue.png" class="leaflet-control-legend-icon" style='background:rgb(68, 140, 203);'></img>
-        <span>Occupied</span>
-      </div>
-      <div>
-        <img src="../assets/icons/grave_icon_gold.png" class="leaflet-control-legend-icon" style='background:rgb(212, 198, 37);'></img>
-        <span>Available</span>
-      </div>
-      <div>
-        <img src="../assets/icons/grave_icon_purple.png" class="leaflet-control-legend-icon" style='background:rgb(203, 68, 109);'></img>
-        <span>Sold</span>
-      </div>
-    `;
-    return this._div;
-  };
-
-  legend.addTo(myMap);
 }
 
 // Create and return the search tool for grave points to the map
@@ -398,4 +364,19 @@ let tileOrtho = createOrtho().addTo(myMap);
 let searchTool = createSearch().addTo(myMap);
 let layerControl = createLayerControl().addTo(myMap);
 addControls();
-addLegend();
+
+let dummyOccupiedMarker = L.marker([], { icon: blueIcon });
+let dummyAvailableMarker = L.marker([], { icon: goldIcon });
+let dummySoldMarker = L.marker([], { icon: purpleIcon });
+
+// Legend items
+let items = {
+  "Occupied": dummyOccupiedMarker,
+  "Available": dummyAvailableMarker,
+  "Sold": dummySoldMarker,
+}
+
+let legend = L.control.featureLegend(items, {
+  position: "topleft",
+  title: "Plot status",
+}).addTo(myMap);
